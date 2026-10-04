@@ -1,10 +1,10 @@
 from turtle import *
-import random
+from random import randint
 
 # 0 = O, 1 = X, 2 = empty
-EMPTY = 2
 O = 0
 X = 1
+EMPTY = 2
 
 pos = [
     [0, 0],
@@ -14,12 +14,17 @@ pos = [
 ]
 
 wins = [
-    [1, 2, 3], [4, 5, 6], [7, 8, 9],
-    [1, 4, 7], [2, 5, 8], [3, 6, 9],
-    [1, 5, 9], [3, 5, 7]
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    [1, 4, 7],
+    [2, 5, 8],
+    [3, 6, 9],
+    [1, 5, 9],
+    [3, 5, 7]
 ]
 
-def grid():
+def draw_grid():
     pencolor("black")
     width(3)
 
@@ -42,7 +47,6 @@ def draw_x(key):
     y = pos[key][1]
 
     pencolor("orange")
-
     penup()
     goto(x, y)
     pendown()
@@ -52,7 +56,6 @@ def draw_x(key):
     goto(x, y + 10)
     pendown()
     goto(x + 10, y)
-
     penup()
 
 def draw_o(key):
@@ -60,7 +63,6 @@ def draw_o(key):
     y = pos[key][1]
 
     pencolor("blue")
-
     penup()
     goto(x, y)
     pendown()
@@ -78,41 +80,49 @@ def winner(board):
         b = line[1]
         c = line[2]
 
-        if board[a] == board[b] == board[c]:
-            if board[a] != EMPTY:
-                return board[a]
+        if board[a] != EMPTY:
+            if board[a] == board[b]:
+                if board[a] == board[c]:
+                    return board[a]
 
     return EMPTY
 
-def full(board):
+def board_full(board):
     for i in range(1, 10):
         if board[i] == EMPTY:
             return False
 
     return True
 
-def moves(board):
-    available = []
+def winning_move(board, player):
+    for i in range(1, 10):
+        if board[i] == EMPTY:
+            board[i] = player
+
+            if winner(board) == player:
+                board[i] = EMPTY
+                return i
+
+            board[i] = EMPTY
+
+    return 0
+
+def random_move(board):
+    empty_count = 0
 
     for i in range(1, 10):
         if board[i] == EMPTY:
-            available.append(i)
+            empty_count += 1
 
-    return available
+    choice = randint(1, empty_count)
+    count = 0
 
-def winning_move(board, player):
-    available = moves(board)
+    for i in range(1, 10):
+        if board[i] == EMPTY:
+            count += 1
 
-    for move in available:
-        board[move] = player
-
-        if winner(board) == player:
-            board[move] = EMPTY
-            return move
-
-        board[move] = EMPTY
-
-    return 0
+            if count == choice:
+                return i
 
 def minimax(board, maximise, depth, alpha, beta):
     win = winner(board)
@@ -123,69 +133,67 @@ def minimax(board, maximise, depth, alpha, beta):
     if win == O:
         return depth - 10
 
-    if full(board):
+    if board_full(board):
         return 0
-
-    available = moves(board)
 
     if maximise:
         best = -100
 
-        for move in available:
-            board[move] = X
+        for i in range(1, 10):
+            if board[i] == EMPTY:
+                board[i] = X
 
-            score = minimax(
-                board,
-                False,
-                depth + 1,
-                alpha,
-                beta
-            )
+                score = minimax(
+                    board,
+                    False,
+                    depth + 1,
+                    alpha,
+                    beta
+                )
 
-            board[move] = EMPTY
+                board[i] = EMPTY
 
-            if score > best:
-                best = score
+                if score > best:
+                    best = score
 
-            if best > alpha:
-                alpha = best
+                if best > alpha:
+                    alpha = best
 
-            if beta <= alpha:
-                break
+                if beta <= alpha:
+                    break
 
         return best
 
     else:
         best = 100
 
-        for move in available:
-            board[move] = O
+        for i in range(1, 10):
+            if board[i] == EMPTY:
+                board[i] = O
 
-            score = minimax(
-                board,
-                True,
-                depth + 1,
-                alpha,
-                beta
-            )
+                score = minimax(
+                    board,
+                    True,
+                    depth + 1,
+                    alpha,
+                    beta
+                )
 
-            board[move] = EMPTY
+                board[i] = EMPTY
 
-            if score < best:
-                best = score
+                if score < best:
+                    best = score
 
-            if best < beta:
-                beta = best
+                if best < beta:
+                    beta = best
 
-            if beta <= alpha:
-                break
+                if beta <= alpha:
+                    break
 
         return best
 
 def easy_bot(board):
-    available = moves(board)
-
-    return random.choice(available)
+    return random_move(board)
 
 def medium_bot(board):
     move = winning_move(board, X)
@@ -201,39 +209,43 @@ def medium_bot(board):
     if board[5] == EMPTY:
         return 5
 
-    return easy_bot(board)
+    return random_move(board)
 
 def impossible_bot(board):
-    best = -100
+    best_score = -100
     best_move = 0
     alpha = -100
     beta = 100
 
-    available = moves(board)
+    # Centre is a strong first move and avoids
+    # searching the entire empty game tree.
+    if board[5] == EMPTY:
+        return 5
 
-    for move in available:
-        board[move] = X
+    for i in range(1, 10):
+        if board[i] == EMPTY:
+            board[i] = X
 
-        score = minimax(
-            board,
-            False,
-            0,
-            alpha,
-            beta
-        )
+            score = minimax(
+                board,
+                False,
+                0,
+                alpha,
+                beta
+            )
 
-        board[move] = EMPTY
+            board[i] = EMPTY
 
-        if score > best:
-            best = score
-            best_move = move
+            if score > best_score:
+                best_score = score
+                best_move = i
 
-        if best > alpha:
-            alpha = best
+            if best_score > alpha:
+                alpha = best_score
 
     return best_move
 
-def bot_move(board, difficulty):
+def computer_move(board, difficulty):
     if difficulty == 1:
         return easy_bot(board)
 
@@ -244,18 +256,14 @@ def bot_move(board, difficulty):
 
 def get_number(message, low, high):
     while True:
-        try:
-            number = int(input(message))
+        number = int(input(message))
 
-            if number >= low and number <= high:
-                return number
+        if number >= low and number <= high:
+            return number
 
-            print("Enter", low, "to", high)
+        print("Enter", low, "to", high)
 
-        except:
-            print("Invalid input")
-
-def player_move(board):
+def get_player_move(board):
     while True:
         key = get_number(
             "Position: ",
@@ -268,7 +276,16 @@ def player_move(board):
 
         print("Already played")
 
-def result(win, mode):
+def show_positions():
+    print()
+    print("7 | 8 | 9")
+    print("--+---+--")
+    print("4 | 5 | 6")
+    print("--+---+--")
+    print("1 | 2 | 3")
+    print()
+
+def show_result(win, mode):
     for i in range(5):
         penup()
         goto(-100, -100)
@@ -298,18 +315,17 @@ def result(win, mode):
     penup()
 
 def main():
-    board = [
-        2, 2, 2, 2, 2,
-        2, 2, 2, 2, 2
-    ]
-
+    board = [EMPTY] * 10
     turn = O
 
     speed("fastest")
+    pencolor("black")
     width(3)
     hideturtle()
+    penup()
 
     print("TIC TAC TOE")
+    print()
     print("1 - Two Players")
     print("2 - Computer")
 
@@ -322,6 +338,7 @@ def main():
     difficulty = 0
 
     if mode == 2:
+        print()
         print("1 - Easy")
         print("2 - Medium")
         print("3 - Impossible")
@@ -332,15 +349,13 @@ def main():
             3
         )
 
-    grid()
+    draw_grid()
 
     while True:
-        print()
-        print("7 8 9")
-        print("4 5 6")
-        print("1 2 3")
+        show_positions()
 
         if mode == 1 or turn == O:
+
             if mode == 1:
                 if turn == O:
                     print("Nought's turn")
@@ -349,12 +364,13 @@ def main():
             else:
                 print("Your turn")
 
-            key = player_move(board)
+            key = get_player_move(board)
 
             if turn == O:
                 board[key] = O
                 draw_o(key)
                 turn = X
+
             else:
                 board[key] = X
                 draw_x(key)
@@ -363,7 +379,7 @@ def main():
         else:
             print("Computer thinking...")
 
-            key = bot_move(
+            key = computer_move(
                 board,
                 difficulty
             )
@@ -371,21 +387,18 @@ def main():
             board[key] = X
             draw_x(key)
 
-            print(
-                "Computer played",
-                key
-            )
+            print("Computer played", key)
 
             turn = O
 
         win = winner(board)
 
         if win != EMPTY:
-            result(win, mode)
+            show_result(win, mode)
             break
 
-        if full(board):
-            result(EMPTY, mode)
+        if board_full(board):
+            show_result(EMPTY, mode)
             break
 
     input()
