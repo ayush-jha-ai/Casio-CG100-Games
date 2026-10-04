@@ -133,16 +133,16 @@ def getmove(b):
 def result(v,mode):
     clear()
     pencolor("black")
-    penup();goto(-100,0);pendown()
-
-    if v==O:
-        if mode==2:write("You win!")
-        else:write("Noughts win!")
-    elif v==X:
-        if mode==2:write("Computer wins!")
-        else:write("Crosses win!")
+    penup();goto(-80,0);pendown()
+    if mode==2:
+        if v==O:write("YOU WON!")
+        elif v==X:write("YOU LOST!")
+        else:write("DRAW!")
     else:
-        write("Draw!")
+        if v==O:write("NOUGHTS WIN!")
+        elif v==X:write("CROSSES WIN!")
+        else:write("DRAW!")
+    penup()
 
 def main():
     b=[E]*10
