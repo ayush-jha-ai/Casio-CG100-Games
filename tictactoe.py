@@ -1,407 +1,200 @@
 from turtle import *
 from random import randint
 
-# 0 = O, 1 = X, 2 = empty
-O = 0
-X = 1
-EMPTY = 2
+E=2
+O=0
+X=1
 
-pos = [
-    [0, 0],
-    [-100, -60], [-5, -60], [85, -60],
-    [-100, -5], [-5, -5], [85, -5],
-    [-100, 45], [-5, 45], [85, 45]
-]
+p=[[0,0],[-100,-60],[-5,-60],[85,-60],
+[-100,-5],[-5,-5],[85,-5],
+[-100,45],[-5,45],[85,45]]
 
-wins = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9],
-    [1, 4, 7],
-    [2, 5, 8],
-    [3, 6, 9],
-    [1, 5, 9],
-    [3, 5, 7]
-]
+w=((1,2,3),(4,5,6),(7,8,9),
+(1,4,7),(2,5,8),(3,6,9),
+(1,5,9),(3,5,7))
 
-def draw_grid():
-    pencolor("black")
-    width(3)
-
-    for x in [-50, 50]:
-        penup()
-        goto(x, 75)
-        pendown()
-        goto(x, -75)
-
-    for y in [-25, 25]:
-        penup()
-        goto(-125, y)
-        pendown()
-        goto(125, y)
-
+def grid():
+    for x in (-50,50):
+        penup();goto(x,75);pendown();goto(x,-75)
+    for y in (-25,25):
+        penup();goto(-125,y);pendown();goto(125,y)
     penup()
 
-def draw_x(key):
-    x = pos[key][0]
-    y = pos[key][1]
-
-    pencolor("orange")
-    penup()
-    goto(x, y)
-    pendown()
-    goto(x + 10, y + 10)
-
-    penup()
-    goto(x, y + 10)
-    pendown()
-    goto(x + 10, y)
+def mark(k,v):
+    x,y=p[k]
+    penup();goto(x,y);pendown()
+    if v==X:
+        pencolor("orange")
+        goto(x+10,y+10)
+        penup();goto(x,y+10);pendown();goto(x+10,y)
+    else:
+        pencolor("blue")
+        goto(x+10,y);goto(x+10,y+10)
+        goto(x,y+10);goto(x,y)
     penup()
 
-def draw_o(key):
-    x = pos[key][0]
-    y = pos[key][1]
+def win(b):
+    for a,c,d in w:
+        if b[a]!=E and b[a]==b[c] and b[a]==b[d]:
+            return b[a]
+    return E
 
-    pencolor("blue")
-    penup()
-    goto(x, y)
-    pendown()
-
-    goto(x + 10, y)
-    goto(x + 10, y + 10)
-    goto(x, y + 10)
-    goto(x, y)
-
-    penup()
-
-def winner(board):
-    for line in wins:
-        a = line[0]
-        b = line[1]
-        c = line[2]
-
-        if board[a] != EMPTY:
-            if board[a] == board[b]:
-                if board[a] == board[c]:
-                    return board[a]
-
-    return EMPTY
-
-def board_full(board):
-    for i in range(1, 10):
-        if board[i] == EMPTY:
-            return False
-
+def full(b):
+    for i in range(1,10):
+        if b[i]==E:return False
     return True
 
-def winning_move(board, player):
-    for i in range(1, 10):
-        if board[i] == EMPTY:
-            board[i] = player
-
-            if winner(board) == player:
-                board[i] = EMPTY
-                return i
-
-            board[i] = EMPTY
-
+def winning(b,v):
+    for i in range(1,10):
+        if b[i]==E:
+            b[i]=v
+            z=win(b)
+            b[i]=E
+            if z==v:return i
     return 0
 
-def random_move(board):
-    empty_count = 0
+def rnd(b):
+    n=0
+    for i in range(1,10):
+        if b[i]==E:n+=1
+    r=randint(1,n)
+    n=0
+    for i in range(1,10):
+        if b[i]==E:
+            n+=1
+            if n==r:return i
 
-    for i in range(1, 10):
-        if board[i] == EMPTY:
-            empty_count += 1
+def mm(b,maxi,d,a,z):
+    q=win(b)
+    if q==X:return 10-d
+    if q==O:return d-10
+    if full(b):return 0
 
-    choice = randint(1, empty_count)
-    count = 0
-
-    for i in range(1, 10):
-        if board[i] == EMPTY:
-            count += 1
-
-            if count == choice:
-                return i
-
-def minimax(board, maximise, depth, alpha, beta):
-    win = winner(board)
-
-    if win == X:
-        return 10 - depth
-
-    if win == O:
-        return depth - 10
-
-    if board_full(board):
-        return 0
-
-    if maximise:
-        best = -100
-
-        for i in range(1, 10):
-            if board[i] == EMPTY:
-                board[i] = X
-
-                score = minimax(
-                    board,
-                    False,
-                    depth + 1,
-                    alpha,
-                    beta
-                )
-
-                board[i] = EMPTY
-
-                if score > best:
-                    best = score
-
-                if best > alpha:
-                    alpha = best
-
-                if beta <= alpha:
-                    break
-
+    if maxi:
+        best=-100
+        for i in range(1,10):
+            if b[i]==E:
+                b[i]=X
+                s=mm(b,False,d+1,a,z)
+                b[i]=E
+                if s>best:best=s
+                if best>a:a=best
+                if z<=a:break
         return best
-
     else:
-        best = 100
-
-        for i in range(1, 10):
-            if board[i] == EMPTY:
-                board[i] = O
-
-                score = minimax(
-                    board,
-                    True,
-                    depth + 1,
-                    alpha,
-                    beta
-                )
-
-                board[i] = EMPTY
-
-                if score < best:
-                    best = score
-
-                if best < beta:
-                    beta = best
-
-                if beta <= alpha:
-                    break
-
+        best=100
+        for i in range(1,10):
+            if b[i]==E:
+                b[i]=O
+                s=mm(b,True,d+1,a,z)
+                b[i]=E
+                if s<best:best=s
+                if best<z:z=best
+                if z<=a:break
         return best
 
-def easy_bot(board):
-    return random_move(board)
+def bot(b,d):
+    if d==1:return rnd(b)
 
-def medium_bot(board):
-    move = winning_move(board, X)
+    m=winning(b,X)
+    if m:return m
 
-    if move != 0:
-        return move
+    m=winning(b,O)
+    if m:return m
 
-    move = winning_move(board, O)
+    if d==2:
+        if b[5]==E:return 5
+        return rnd(b)
 
-    if move != 0:
-        return move
+    if b[5]==E:return 5
 
-    if board[5] == EMPTY:
-        return 5
+    best=-100
+    move=0
+    a=-100
 
-    return random_move(board)
+    for i in range(1,10):
+        if b[i]==E:
+            b[i]=X
+            s=mm(b,False,0,a,100)
+            b[i]=E
+            if s>best:
+                best=s
+                move=i
+            if best>a:a=best
+    return move
 
-def impossible_bot(board):
-    best_score = -100
-    best_move = 0
-    alpha = -100
-    beta = 100
-
-    # Centre is a strong first move and avoids
-    # searching the entire empty game tree.
-    if board[5] == EMPTY:
-        return 5
-
-    for i in range(1, 10):
-        if board[i] == EMPTY:
-            board[i] = X
-
-            score = minimax(
-                board,
-                False,
-                0,
-                alpha,
-                beta
-            )
-
-            board[i] = EMPTY
-
-            if score > best_score:
-                best_score = score
-                best_move = i
-
-            if best_score > alpha:
-                alpha = best_score
-
-    return best_move
-
-def computer_move(board, difficulty):
-    if difficulty == 1:
-        return easy_bot(board)
-
-    if difficulty == 2:
-        return medium_bot(board)
-
-    return impossible_bot(board)
-
-def get_number(message, low, high):
+def getmove(b):
     while True:
-        number = int(input(message))
+        k=int(input("Position: "))
+        if k>=1 and k<=9 and b[k]==E:
+            return k
+        print("Try again")
 
-        if number >= low and number <= high:
-            return number
-
-        print("Enter", low, "to", high)
-
-def get_player_move(board):
-    while True:
-        key = get_number(
-            "Position: ",
-            1,
-            9
-        )
-
-        if board[key] == EMPTY:
-            return key
-
-        print("Already played")
-
-def show_positions():
-    print()
-    print("7 | 8 | 9")
-    print("--+---+--")
-    print("4 | 5 | 6")
-    print("--+---+--")
-    print("1 | 2 | 3")
-    print()
-
-def show_result(win, mode):
-    for i in range(5):
-        penup()
-        goto(-100, -100)
-        goto(100, 100)
-
+def result(v,mode):
     clear()
     pencolor("black")
-    penup()
-    goto(-100, 0)
-    pendown()
+    penup();goto(-100,0);pendown()
 
-    if win == O:
-        if mode == 2:
-            write("You win!")
-        else:
-            write("Noughts win!")
-
-    elif win == X:
-        if mode == 2:
-            write("Computer wins!")
-        else:
-            write("Crosses win!")
-
+    if v==O:
+        if mode==2:write("You win!")
+        else:write("Noughts win!")
+    elif v==X:
+        if mode==2:write("Computer wins!")
+        else:write("Crosses win!")
     else:
         write("Draw!")
 
-    penup()
-
 def main():
-    board = [EMPTY] * 10
-    turn = O
+    b=[E]*10
+    turn=O
 
     speed("fastest")
-    pencolor("black")
     width(3)
     hideturtle()
-    penup()
 
     print("TIC TAC TOE")
-    print()
-    print("1 - Two Players")
-    print("2 - Computer")
+    print("1 Two Players")
+    print("2 Computer")
+    mode=int(input("Mode: "))
 
-    mode = get_number(
-        "Mode: ",
-        1,
-        2
-    )
+    d=0
+    if mode==2:
+        print("1 Easy")
+        print("2 Medium")
+        print("3 Impossible")
+        d=int(input("Level: "))
 
-    difficulty = 0
-
-    if mode == 2:
-        print()
-        print("1 - Easy")
-        print("2 - Medium")
-        print("3 - Impossible")
-
-        difficulty = get_number(
-            "Difficulty: ",
-            1,
-            3
-        )
-
-    draw_grid()
+    grid()
 
     while True:
-        show_positions()
+        print("7 8 9")
+        print("4 5 6")
+        print("1 2 3")
 
-        if mode == 1 or turn == O:
-
-            if mode == 1:
-                if turn == O:
-                    print("Nought's turn")
-                else:
-                    print("Cross's turn")
-            else:
-                print("Your turn")
-
-            key = get_player_move(board)
-
-            if turn == O:
-                board[key] = O
-                draw_o(key)
-                turn = X
-
-            else:
-                board[key] = X
-                draw_x(key)
-                turn = O
-
+        if mode==2 and turn==X:
+            print("Computer...")
+            k=bot(b,d)
+            print("Computer:",k)
         else:
-            print("Computer thinking...")
+            k=getmove(b)
 
-            key = computer_move(
-                board,
-                difficulty
-            )
+        b[k]=turn
+        mark(k,turn)
 
-            board[key] = X
-            draw_x(key)
+        q=win(b)
 
-            print("Computer played", key)
-
-            turn = O
-
-        win = winner(board)
-
-        if win != EMPTY:
-            show_result(win, mode)
+        if q!=E:
+            result(q,mode)
             break
 
-        if board_full(board):
-            show_result(EMPTY, mode)
+        if full(b):
+            result(E,mode)
             break
+
+        if turn==O:turn=X
+        else:turn=O
 
     input()
 
-if __name__ == "__main__":
+if __name__=="__main__":
     main()
