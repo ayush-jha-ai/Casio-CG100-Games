@@ -148,7 +148,7 @@ def main():
     b=[E]*10
     turn=O
 
-    speed("fastest")
+    speed(2)
     width(3)
     hideturtle()
 
@@ -196,5 +196,4 @@ def main():
 
     input()
 
-if __name__=="__main__":
-    main()
+main()
