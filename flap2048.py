@@ -12,6 +12,11 @@ def box(x,y,w,h,c):
             if a>=0 and a<W and b>=0 and b<H:
                 set_pixel(a,b,c)
 
+def num(x,y,w,h,v):
+    s=str(v)
+    if len(s)<4:draw_string(x+(w-12*len(s))//2,y+(h-17)//2,s,(0,0,0))
+    else:draw_string(x+(w-8*len(s))//2,y+(h-10)//2,s,(0,0,0),"small")
+
 def wall(v):
     a=[2,4,8,16,32,64,128,256]
     r=randint(1,6)
@@ -19,76 +24,77 @@ def wall(v):
     return [380,a]
 
 def drawbird(y,v):
-    box(60,y,24,18,(255,180,0))
-    draw_string(64,y+4,str(v),(0,0,0))
+    box(60,y,36,18,(255,180,0))
+    num(60,y,36,18,v)
 
 def drawwall(x,a):
     for i in range(8):
         y=i*BH
         box(x,y,38,BH-2,(180,180,180))
-        draw_string(x+4,y+5,str(a[i]),(0,0,0))
+        num(x,y,38,BH-2,a[i])
 
 def main():
-    y=85
-    vel=0
-    value=2
-    x,a=wall(value)
-    passed=False
-
     while True:
-        k=getkey()
+        y=85
+        vel=0
+        value=2
+        x,a=wall(value)
+        passed=False
 
-        if k==12:return
-        if k==24 or k==95:vel=-6
+        while True:
+            k=getkey()
 
-        vel+=1
-        y+=vel
-        x-=3
+            if k==12:return
+            if k==24 or k==95:vel=-6
 
-        if y<0 or y>H-18:
-            break
+            vel+=1
+            y+=vel
+            x-=3
 
-        if x<84 and x+38>60 and not passed:
-            n=(y+9)//BH
-
-            if n<0 or n>7 or a[n]!=value:
+            if y<0 or y>H-18:
                 break
 
-            value*=2
-            passed=True
+            if x<96 and x+38>60 and not passed:
+                n=(y+9)//BH
 
-            if value>=2048:
-                clear_screen()
-                draw_string(145,75,"YOU WIN!",(0,0,0))
-                draw_string(140,100,"2048!",(0,0,0))
-                show_screen()
-                while getkey()==0:pass
-                return
+                if n<0 or n>7 or a[n]!=value:
+                    break
 
-        if x<-40:
-            x,a=wall(value)
-            passed=False
+                value*=2
+                passed=True
+
+                if value>=2048:
+                    clear_screen()
+                    draw_string(145,75,"YOU WIN!",(0,0,0))
+                    draw_string(140,100,"2048!",(0,0,0))
+                    show_screen()
+                    while getkey():pass
+                    while getkey()==0:pass
+                    return
+
+            if x<-40:
+                x,a=wall(value)
+                passed=False
+
+            clear_screen()
+            draw_string(5,5,"Value:"+str(value),(0,0,0))
+            drawbird(y,value)
+            drawwall(x,a)
+            show_screen()
+
+            for i in range(1200):
+                pass
 
         clear_screen()
-        draw_string(5,5,"Value:"+str(value),(0,0,0))
-        drawbird(y,value)
-        drawwall(x,a)
+        draw_string(145,70,"GAME OVER",(255,0,0))
+        draw_string(140,95,"Value: "+str(value),(0,0,0))
+        draw_string(139,120,"OK = Again",(0,0,0))
         show_screen()
 
-        for i in range(1200):
-            pass
-
-    clear_screen()
-    draw_string(145,70,"GAME OVER",(255,0,0))
-    draw_string(140,95,"Value: "+str(value),(0,0,0))
-    draw_string(115,120,"24/95 = Again",(0,0,0))
-    show_screen()
-
-    while True:
-        k=getkey()
-        if k==24 or k==95:
-            main()
-            return
-        if k==12:return
+        while getkey():pass
+        while True:
+            k=getkey()
+            if k==24 or k==95:break
+            if k==12:return
 
 main()
