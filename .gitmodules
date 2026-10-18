@@ -1,0 +1,3 @@
+[submodule "gpsp"]
+	path = gpsp
+	url = https://github.com/ayush-jha-ai/gpsp-sh4-jit.git
