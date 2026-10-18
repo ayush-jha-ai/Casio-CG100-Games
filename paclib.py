@@ -20,7 +20,10 @@ GC=((255,0,0),(255,160,255),(0,230,230),(255,170,70),(40,40,255))
 D4=((0,-1),(-1,0),(0,1),(1,0))
 KD={14:0,23:1,34:2,25:3}
 CIR=[(a,b) for b in range(7) for a in range(7) if abs(a-3)<=(1,2,3,3,3,2,1)[b]]
-dt=bytearray(594)
+dt=[0]*22
+
+def dot(i):
+    return (dt[i//W]>>i%W&1)*(1+(MZ[i]=="o"))
 
 def box(x,y,w,h,c):
     for a in range(x,x+w):
@@ -35,7 +38,8 @@ def tile(c,r):
     x=4+c*8
     y=8+r*8
     box(x,y,8,8,(20,40,150) if MZ[i] in "#x" else K)
-    if dt[i]:box(x+4-dt[i],y+4-dt[i],2*dt[i],2*dt[i],(255,184,151))
+    d=dot(i)
+    if d:box(x+4-d,y+4-d,2*d,2*d,(255,184,151))
 
 def under(x,y):
     tile(x//8,y//8)
@@ -50,11 +54,12 @@ def pmove(p,nd,st):
         c=p[0]//8
         r=p[1]//8
         i=r*W+c
-        if dt[i]:
-            st[0]+=(10,50)[dt[i]-1]
+        d=dot(i)
+        if d:
+            st[0]+=(10,50)[d-1]
             st[1]-=1
-            if dt[i]==2:st[2]=1
-            dt[i]=0
+            if d==2:st[2]=1
+            dt[r]&=~(1<<c)
         if c==0 and p[2]<0:p[0]=208
         if c==26 and p[2]>0:p[0]=0
         c=p[0]//8

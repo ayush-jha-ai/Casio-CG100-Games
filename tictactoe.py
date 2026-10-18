@@ -36,9 +36,9 @@ def txt(y,s,c=K):
 
 def key():
     k=0
-    while k==0:k=getkey()
+    while not k:k=getkey()
     while getkey():pass
-    return k
+    return int(k)
 
 
 def win(b):
@@ -94,8 +94,6 @@ def play(d,t,sc):
         box(14,11+n*S,S*3,3,K)
     draw_string(196,8,"TIC TAC TOE",K)
     draw_string(196,32,LV[d],K,"small")
-    draw_string(196,130,"Keys 1-9 match",K,"small")
-    draw_string(196,144,"the board",K,"small")
     while True:
         n=score(d,sc)
         if d and t==X:

@@ -18,8 +18,13 @@ def main():
         draw_string(232,8,"PAC-MAN",PY,"large")
         while li:
             if lv>0:
-                for i in range(594):dt[i]=".o".find(MZ[i])+1
-                left=sum(1 for v in dt if v)
+                left=0
+                for r in range(22):
+                    dt[r]=0
+                    for c in range(W):
+                        if MZ[r*W+c] in ".o":
+                            dt[r]|=1<<c
+                            left+=1
                 for i in range(594):tile(i%W,i//W)
                 lv=-lv
             p=[104,128,0,0]
