@@ -5,15 +5,11 @@ E=2
 O=0
 X=1
 S=56
-L=14
-T=12
 K=(0,0,0)
 WH=(255,255,255)
 CO=((0,90,255),(255,140,0))
-
-w=((1,2,3),(4,5,6),(7,8,9),
-(1,4,7),(2,5,8),(3,6,9),
-(1,5,9),(3,5,7))
+LV=("Two players","vs CPU: Easy","vs CPU: Medium","vs CPU: Impossible")
+w=((1,2,3),(4,5,6),(7,8,9),(1,4,7),(2,5,8),(3,6,9),(1,5,9),(3,5,7))
 
 def box(x,y,a,b,c):
     for i in range(x,x+a):
@@ -21,38 +17,18 @@ def box(x,y,a,b,c):
             set_pixel(i,j,c)
 
 def xy(i):
-    return L+(i-1)%3*S,T+(9-i)//3*S
-
-def grid():
-    for n in (1,2):
-        box(L+n*S-1,T,3,S*3,K)
-        box(L,T+n*S-1,S*3,3,K)
+    return 14+(i-1)%3*S,12+(9-i)//3*S
 
 def mark(i,v):
     x,y=xy(i)
-    if v==X:
-        for j in range(34):
-            for t in range(3):
-                set_pixel(x+11+j+t,y+11+j,CO[X])
-                set_pixel(x+45-j-t,y+11+j,CO[X])
-    else:
+    for j in range(34):
+        if v==X:
+            box(x+11+j,y+11+j,3,1,CO[X])
+            box(x+43-j,y+11+j,3,1,CO[X])
+    if v==O:
         for a in range(-18,19):
             for b in range(-18,19):
-                d=a*a+b*b
-                if d>=196 and d<=324:set_pixel(x+28+a,y+28+b,CO[O])
-
-def cur(i,c):
-    x,y=xy(i)
-    box(x+4,y+4,S-8,2,c)
-    box(x+4,y+S-6,S-8,2,c)
-    box(x+4,y+4,2,S-8,c)
-    box(x+S-6,y+4,2,S-8,c)
-
-def line(t):
-    x1,y1=xy(t[0])
-    x2,y2=xy(t[2])
-    for s in range(41):
-        box(x1+26+(x2-x1)*s//40,y1+26+(y2-y1)*s//40,5,5,(220,0,0))
+                if 196<=a*a+b*b<=324:set_pixel(x+28+a,y+28+b,CO[O])
 
 def txt(y,s,c=K):
     box(196,y,188,18,WH)
@@ -64,189 +40,101 @@ def key():
     while getkey():pass
     return k
 
-def menu(t,o):
-    clear_screen()
-    draw_string(93,12,"TIC TAC TOE",CO[O],"large")
-    draw_string(40,52,t,K)
-    n=1
-    while True:
-        for i in range(len(o)):
-            c=WH
-            if i+1==n:c=CO[X]
-            box(40,85+i*28,8,8,c)
-            draw_string(56,80+i*28,str(i+1)+"  "+o[i],K)
-        show_screen()
-        k=key()
-        if k==12:return 0
-        if k==14 and n>1:n-=1
-        if k==34 and n<len(o):n+=1
-        if k==24 or k==95:return n
-        if k>=81 and k<81+len(o):return k-80
 
 def win(b):
     for a,c,d in w:
-        if b[a]!=E and b[a]==b[c] and b[a]==b[d]:
-            return b[a]
-    return E
-
-def full(b):
-    for i in range(1,10):
-        if b[i]==E:return False
-    return True
-
-def winning(b,v):
-    for i in range(1,10):
-        if b[i]==E:
-            b[i]=v
-            z=win(b)
-            b[i]=E
-            if z==v:return i
+        if b[a]!=E and b[a]==b[c]==b[d]:return a
     return 0
 
-def rnd(b):
-    n=0
-    for i in range(1,10):
-        if b[i]==E:n+=1
-    r=randint(1,n)
-    n=0
+def mm(b,p,d,a,z):
+    if win(b):return d-10
+    if E not in b[1:]:return 0
     for i in range(1,10):
         if b[i]==E:
-            n+=1
-            if n==r:return i
-
-def mm(b,maxi,d,a,z):
-    q=win(b)
-    if q==X:return 10-d
-    if q==O:return d-10
-    if full(b):return 0
-
-    if maxi:
-        best=-100
-        for i in range(1,10):
-            if b[i]==E:
-                b[i]=X
-                s=mm(b,False,d+1,a,z)
-                b[i]=E
-                if s>best:best=s
-                if best>a:a=best
-                if z<=a:break
-        return best
-    else:
-        best=100
-        for i in range(1,10):
-            if b[i]==E:
-                b[i]=O
-                s=mm(b,True,d+1,a,z)
-                b[i]=E
-                if s<best:best=s
-                if best<z:z=best
-                if z<=a:break
-        return best
+            b[i]=p
+            s=-mm(b,1-p,d+1,-z,-a)
+            b[i]=E
+            if s>a:a=s
+            if a>=z:break
+    return a
 
 def bot(b,d):
-    if d==1:return rnd(b)
-
-    m=winning(b,X)
-    if m:return m
-
-    m=winning(b,O)
-    if m:return m
-
-    if d==2:
-        if b[5]==E:return 5
-        return rnd(b)
-
-    if b[5]==E:return 5
-
-    best=-100
-    move=0
-    a=-100
-
-    for i in range(1,10):
-        if b[i]==E:
-            b[i]=X
-            s=mm(b,False,0,a,100)
+    e=[i for i in range(1,10) if b[i]==E]
+    if d==1:return e[randint(0,len(e)-1)]
+    for v in (X,O):
+        for i in e:
+            b[i]=v
+            q=win(b)
             b[i]=E
-            if s>best:
-                best=s
-                move=i
-            if best>a:a=best
-    return move
+            if q:return i
+    if b[5]==E:return 5
+    if d==2:return e[randint(0,len(e)-1)]
+    m=e[0]
+    a=-99
+    for i in e:
+        b[i]=X
+        s=-mm(b,O,1,-99,-a)
+        b[i]=E
+        if s>a:
+            a=s
+            m=i
+    return m
 
-def score(m,sc):
+def score(d,sc):
     n=("O","X")
-    if m==2:n=("You","CPU")
+    if d:n=("You","CPU")
     txt(90,n[0]+":"+str(sc[O])+" "+n[1]+":"+str(sc[X])+" D:"+str(sc[E]))
+    return n
 
-def play(m,d,t,sc):
+def play(d,t,sc):
     b=[E]*10
     clear_screen()
-    grid()
+    for n in (1,2):
+        box(13+n*S,12,3,S*3,K)
+        box(14,11+n*S,S*3,3,K)
     draw_string(196,8,"TIC TAC TOE",K)
-    if m==2:draw_string(196,32,"vs CPU: "+("Easy","Medium","Impossible")[d-1],K,"small")
-    else:draw_string(196,32,"Two players",K,"small")
-    draw_string(196,130,"1-9 or arrows",K,"small")
-    draw_string(196,145,"OK/EXE: place",K,"small")
-    score(m,sc)
-    c=5
+    draw_string(196,32,LV[d],K,"small")
+    draw_string(196,130,"Keys 1-9 match",K,"small")
+    draw_string(196,144,"the board",K,"small")
     while True:
-        if m==2 and t==X:
+        n=score(d,sc)
+        if d and t==X:
             txt(55,"Thinking...")
             show_screen()
             k=bot(b,d)
         else:
-            if m==2:txt(55,"Your turn",CO[O])
-            else:txt(55,"OX"[t]+" to play",CO[t])
-            cur(c,(0,180,0))
+            txt(55,n[t]+" to play",CO[t])
             show_screen()
             k=0
             while k==0:
                 g=key()
                 if g==12:return -1
-                n=c
-                r=(9-c)//3
-                q=(c-1)%3
-                if g==14 and r>0:n=c+3
-                elif g==34 and r<2:n=c-3
-                elif g==23 and q>0:n=c-1
-                elif g==25 and q<2:n=c+1
-                elif g==24 or g==95:
-                    if b[c]==E:k=c
-                elif g//10>5 and g//10<9 and g%10>0 and g%10<4:
-                    n=(8-g//10)*3+g%10
-                    if b[n]==E:k=n
-                if n!=c:
-                    cur(c,WH)
-                    c=n
-                    cur(c,(0,180,0))
-                    show_screen()
-            cur(c,WH)
+                if g>60 and g<84 and 0<g%10<4 and b[(8-g//10)*3+g%10]==E:k=(8-g//10)*3+g%10
         b[k]=t
         mark(k,t)
         q=win(b)
-        if q!=E or full(b):
-            for l in w:
-                if q!=E and b[l[0]]==q and b[l[1]]==q and b[l[2]]==q:line(l)
-            return q
+        if q:return t
+        if E not in b[1:]:return E
         t=1-t
 
 def main():
-    m=menu("Mode",("Two players","vs Computer"))
-    if m==0:return
+    clear_screen()
+    draw_string(93,12,"TIC TAC TOE",CO[O],"large")
+    for i in range(4):draw_string(40,60+i*28,str(i+1)+"  "+LV[i],K)
+    show_screen()
     d=0
-    if m==2:
-        d=menu("Level",("Easy","Medium","Impossible"))
-        if d==0:return
+    while d<81 or d>84:
+        d=key()
+        if d==12:return
+    d-=81
     sc=[0,0,0]
     st=O
     while True:
-        q=play(m,d,st,sc)
+        q=play(d,st,sc)
         if q<0:return
         sc[q]+=1
-        if m==2:r=("You win!","CPU wins!","Draw!")[q]
-        else:r=("O wins!","X wins!","Draw!")[q]
-        txt(55,r,(CO[O],CO[X],K)[q])
-        score(m,sc)
+        txt(55,(("O wins!","X wins!"),("You win!","CPU wins!"))[d>0][q] if q<2 else "Draw!",(CO[O],CO[X],K)[q])
+        score(d,sc)
         draw_string(196,165,"OK: play again",K,"small")
         show_screen()
         k=0

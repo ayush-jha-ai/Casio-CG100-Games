@@ -13,9 +13,9 @@ CV=(150,160,175)
 OP=(228,228,228)
 NC=((0,0,0),(0,0,230),(0,130,0),(220,0,0),(0,0,120),(130,0,0),(0,130,130),(0,0,0),(110,110,110))
 
-m=[0]*(C*R)
-n=[0]*(C*R)
-s=[0]*(C*R)
+m=bytearray(C*R)
+n=bytearray(C*R)
+s=bytearray(C*R)
 
 def box(x,y,w,h,c):
     for a in range(x,x+w):
@@ -43,17 +43,13 @@ def cell(i,bg=OP):
     y=Y+i//C*S
     if s[i]==1:
         box(x,y,S-1,S-1,bg)
-        if m[i]:
-            box(x+6,y+6,9,9,K)
-            box(x+10,y+3,1,15,K)
-            box(x+3,y+10,15,1,K)
+        if m[i]:box(x+5,y+5,11,11,K)
         elif n[i]:draw_string(x+5,y+2,str(n[i]),NC[n[i]])
     else:
         box(x,y,S-1,S-1,CV)
         if s[i]==2:
             box(x+12,y+4,2,13,K)
             box(x+6,y+4,6,6,(220,0,0))
-            box(x+8,y+16,8,2,K)
 
 def cur(i):
     x=X+i%C*S
@@ -141,19 +137,14 @@ def main():
                     else:o+=flood(q)
                 if end==0 and o==C*R-N:end=-1
             cell(p)
+        for i in range(C*R):
+            if m[i] and s[i]!=2:
+                s[i]=1+(end<0)
+                cell(i)
         if end>0:
-            for i in range(C*R):
-                if m[i] and s[i]!=2:
-                    s[i]=1
-                    cell(i)
             cell(end-1,(230,60,60))
             hud("BOOM!  OK: again",(220,0,0))
-        else:
-            for i in range(C*R):
-                if m[i] and s[i]!=2:
-                    s[i]=2
-                    cell(i)
-            hud("CLEARED!  OK: again",(0,150,0))
+        else:hud("CLEARED!  OK: again",(0,150,0))
         show_screen()
         k=0
         while k!=24 and k!=95 and k!=12:k=key()
