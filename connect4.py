@@ -23,9 +23,9 @@ def disc(x,y,c):
 
 def key():
     k=0
-    while k==0:k=getkey()
+    while not k:k=getkey()
     while getkey():pass
-    return k
+    return int(k)
 
 def txt(y,s,c=K):
     box(208,y,176,18,WH)

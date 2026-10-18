@@ -17,7 +17,7 @@ def cells(p,r):
     for i in range(r):c=[(n-1-b,a) for a,b in c]
     return c
 
-g=bytearray(200)
+g=[0]*200
 
 def box(x,y,w,h,c):
     for a in range(x,x+w):

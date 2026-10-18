@@ -13,9 +13,9 @@ CV=(150,160,175)
 OP=(228,228,228)
 NC=((0,0,0),(0,0,230),(0,130,0),(220,0,0),(0,0,120),(130,0,0),(0,130,130),(0,0,0),(110,110,110))
 
-m=bytearray(C*R)
-n=bytearray(C*R)
-s=bytearray(C*R)
+m=[0]*(C*R)
+n=[0]*(C*R)
+s=[0]*(C*R)
 
 def box(x,y,w,h,c):
     for a in range(x,x+w):
@@ -24,9 +24,9 @@ def box(x,y,w,h,c):
 
 def key():
     k=0
-    while k==0:k=getkey()
+    while not k:k=getkey()
     while getkey():pass
-    return k
+    return int(k)
 
 def nb(i):
     x=i%C
