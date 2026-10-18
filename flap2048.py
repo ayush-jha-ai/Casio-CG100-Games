@@ -69,7 +69,7 @@ def main():
                     draw_string(140,100,"2048!",(0,0,0))
                     show_screen()
                     while getkey():pass
-                    while getkey()==0:pass
+                    while not getkey():pass
                     return
 
             if x<-40:
