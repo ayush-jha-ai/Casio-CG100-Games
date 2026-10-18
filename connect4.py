@@ -93,7 +93,6 @@ def play(lv,t,sc):
     for i in range(42):disc(25+i%7*S,45+i//7*S,WH)
     draw_string(208,8,"CONNECT 4",K)
     draw_string(208,32,LV[lv],K,"small")
-    draw_string(208,150,"1-7, or arrows+OK",K,"small")
     c=3
     for n in range(42):
         score(lv,sc)
@@ -127,10 +126,10 @@ def main():
     for i in range(4):draw_string(40,60+i*28,str(i+1)+"  "+LV[i],K)
     show_screen()
     lv=0
-    while lv<81 or lv>84:
+    while lv not in (81,82,83,71):
         lv=key()
         if lv==12:return
-    lv-=81
+    lv=(81,82,83,71).index(lv)
     sc=[0,0,0]
     st=1
     while True:

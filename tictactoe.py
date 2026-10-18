@@ -121,10 +121,10 @@ def main():
     for i in range(4):draw_string(40,60+i*28,str(i+1)+"  "+LV[i],K)
     show_screen()
     d=0
-    while d<81 or d>84:
+    while d not in (81,82,83,71):
         d=key()
         if d==12:return
-    d-=81
+    d=(81,82,83,71).index(d)
     sc=[0,0,0]
     st=O
     while True:
