@@ -1,6 +1,6 @@
 # Casio CG100 Games
  
-Ten games written in MicroPython that run natively on a Casio CG100 graphing calculator. No emulator, no add-ins, just the built-in Python app. The repo also includes [gpSP](#gba-emulator-gpsp), a Game Boy Advance emulator add-in for the CG50 and CG100.
+Thirteen games written in MicroPython that run natively on a Casio CG100 graphing calculator. No emulator, no add-ins, just the built-in Python app. The repo also includes [gpSP](#gba-emulator-gpsp), a Game Boy Advance emulator add-in for the CG50 and CG100.
  
 <!-- Add a GIF or photo of a game running on the calculator here. This is the single most important thing on the page. -->
 <!-- ![Flappy Bird running on a Casio CG100](media/flappy.gif) -->
@@ -10,6 +10,9 @@ Ten games written in MicroPython that run natively on a Casio CG100 graphing cal
 | File | Game | What's interesting |
 | --- | --- | --- |
 | `flap2048.py` | **2048 Flappy** | An original hybrid. Your bird carries a number, and each wall is a column of powers of two. Fly through the slot matching your number to double it. Reach 2048 to win. |
+| `football.py` + `footlib.py` | **Football** | FIFA-style 1-v-1 match on a striped pitch: dribble, shoot, and tackle a CPU striker, beat its goalkeeper, and win before the 90-minute clock runs out. |
+| `space.py` | **Space Shooter** | Fly a ship along the bottom of a starfield and shoot down waves of aliens before they get through. Waves get bigger and faster as your score climbs. |
+| `halloween.py` | **Trick or Treat** | Catch falling sweets in your pumpkin bucket under a full moon, but dodge the ghosts. More sweets fall, and faster, as your score goes up. |
 | `pacman.py` + `paclib.py` | **Pac-Man** | A 27 x 22 maze with 250 dots, power pellets, a wrap-around tunnel, and four ghosts that each chase differently. Eat a power pellet to turn them blue and chase them back. |
 | `tetris.py` | **Tetris** | All seven pieces with rotation and wall kicks, soft and hard drop, line clears that speed the game up, and a next-piece preview. |
 | `breakout.py` | **Breakout** | Six rows of bricks, a paddle that sets the bounce angle by where the ball lands, three lives, and faster levels once a wall is cleared. |
@@ -23,7 +26,7 @@ Ten games written in MicroPython that run natively on a Casio CG100 graphing cal
 ## Install
  
 1. Connect the CG100 to your computer over USB and select the storage/USB flash option on the calculator.
-2. Copy any of the `.py` files to the calculator's root storage. Pac-Man is two files: copy both `pacman.py` and `paclib.py`, then run `pacman.py`.
+2. Copy any of the `.py` files to the calculator's root storage. Pac-Man and Football are two files each: copy `pacman.py` with `paclib.py`, and `football.py` with `footlib.py`, then run `pacman.py` or `football.py`.
 3. Eject safely, open the **Python** app, select the file and run it.
 
 File names must start with a letter. Running a script makes the Python app import it as a module (`from <name> import *`), and a module name such as `2048` is a syntax error, so the game never starts. That is why the 2048 games are called `game2048.py` and `flap2048.py`.
@@ -46,6 +49,9 @@ Per game:
 - **Tetris**: Left/Right move, Up rotates, Down soft drops, OK or EXE hard drops.
 - **Breakout**: Left/Right move the paddle, OK, EXE or Up launches the ball.
 - **Minesweeper**: arrows move, OK opens a square, EXE places or removes a flag.
+- **Football**: arrows run (you're blue); touch the ball to dribble it, OK or EXE shoots the way you're facing, and run into the CPU to try to win the ball back. You kick off first.
+- **Space Shooter**: Left/Right fly, OK, EXE or Up fires (up to three shots on screen).
+- **Trick or Treat**: Left/Right move the bucket. Sweets score 10; catching a ghost loses a life.
 - **Pac-Man**: arrows steer. Pac-Man keeps going until a wall, and turns at the next opening in the direction you last pressed. Press an arrow to start each life.
 - **Connect Four**: Left/Right and OK, or press 1 to 7 to drop straight into that column.
 - **Tic-Tac-Toe**: press the number key in the matching position. The board stays on screen the whole game.
