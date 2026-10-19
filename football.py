@@ -39,6 +39,8 @@ def main():
                     ball[0]=(u[0]+6*dr[0])*16
                     ball[1]=(u[1]+6*dr[1])*16
                     if k==24 or k==95:
+                        ball[0]=(u[0]+12*dr[0])*16
+                        ball[1]=(u[1]+12*dr[1])*16
                         ball[2]=dr[0]*120
                         ball[3]=dr[1]*120+randint(-20,20)
                         hv=0
