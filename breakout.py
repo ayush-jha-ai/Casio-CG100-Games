@@ -33,14 +33,34 @@ def wait():
     while k!=24 and k!=95 and k!=12:k=getkey()
     return k
 
+def wait2():
+    while getkey():pass
+    k=None
+    while not k:k=getkey()
+    return k
+
 def main():
+    global PW
     while True:
+        clear_screen()
+        draw_string(120,20,"BREAKOUT",(220,40,40),"large")
+        draw_string(110,70,"1  Easy",K)
+        draw_string(110,95,"2  Hard",K)
+        draw_string(70,135,"Left/Right move, OK launches",K,"small")
+        show_screen()
+        e=0
+        while e!=81 and e!=82:
+            e=wait2()
+            if e==12:return
+        e=e==81
+        PW=(40,56)[e]
+        mx=(5,4)[e]
         s=0
-        l=3
+        l=(3,5)[e]
         v=1
-        sp=3
+        sp=(3,2)[e]
         n=0
-        px=172
+        px=192-PW//2
         go=False
         bx=by=vx=vy=0
         clear_screen()
@@ -112,7 +132,7 @@ def main():
                     ay=by
                 if n==0:
                     v+=1
-                    sp=min(5,sp+1)
+                    sp=min(mx,sp+1)
                     hud(s,l,v)
             box(ax,ay,4,4,WH)
             if px!=ox:box(ox,PY,PW,4,WH)
@@ -122,7 +142,7 @@ def main():
             for i in range(D):pass
         box(112,70,160,60,WH)
         draw_string(138,75,"GAME OVER",(255,0,0))
-        draw_string(140,100,"OK: again",K)
+        draw_string(140,100,"OK: menu",K)
         show_screen()
         if wait()==12:return
 

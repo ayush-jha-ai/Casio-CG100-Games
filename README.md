@@ -15,13 +15,13 @@ Thirteen games written in MicroPython that run natively on a Casio CG100 graphin
 | `halloween.py` | **Trick or Treat** | Catch falling sweets in your pumpkin bucket under a full moon, but dodge the ghosts. More sweets fall, and faster, as your score goes up. |
 | `pacman.py` + `paclib.py` | **Pac-Man** | A 27 x 22 maze with 250 dots, power pellets, a wrap-around tunnel, and four ghosts that each chase differently. Eat a power pellet to turn them blue and chase them back. |
 | `tetris.py` | **Tetris** | All seven pieces with rotation and wall kicks, soft and hard drop, line clears that speed the game up, and a next-piece preview. |
-| `breakout.py` | **Breakout** | Six rows of bricks, a paddle that sets the bounce angle by where the ball lands, three lives, and faster levels once a wall is cleared. |
+| `breakout.py` | **Breakout** | Six rows of bricks, a paddle that sets the bounce angle by where the ball lands, and faster levels once a wall is cleared. Easy mode has a slower ball, a wider paddle and five lives; Hard has three lives. |
 | `mines.py` | **Minesweeper** | 16 x 8 board with 20 mines. The first square you open is always safe, empty areas open up on their own, and opening a number whose flags are all placed clears its neighbours. |
 | `connect4.py` | **Connect Four** | Two-player or vs computer at three levels. Hard searches seven moves ahead with alpha-beta pruning. |
 | `tictactoe.py` | **Tic-Tac-Toe** | Two-player or vs computer, with three difficulty levels. Impossible mode uses minimax with alpha-beta pruning. |
 | `game2048.py` | **2048** | Full 4x4 slide-and-merge with coloured tiles, scoring and game-over detection. |
 | `flappybird.py` | **Flappy Bird** | Gravity, scrolling pipes, collision detection, pause and restart. |
-| `snake.py` | **Snake** | Classic grid snake with growing tail, random food and self-collision. |
+| `snake.py` | **Snake** | Classic grid snake with growing tail, random food and self-collision. Easy mode moves at about half the speed of Hard. |
  
 ## Install
  
@@ -42,11 +42,12 @@ The games read raw key codes from `casioplot.getkey()`. Each code is the key's r
 | EXE | 95 | Same as OK; flag a square in Minesweeper |
 | Number keys 1 to 9 | 81 82 83 / 71 72 73 / 61 62 63 | Tic-Tac-Toe squares, Connect Four columns, menu choices |
 | Pause | 36 | Flappy Bird |
-| Quit | 12 | All games except Snake |
+| Quit | 12 | All games |
  
 Per game:
 
 - **Tetris**: Left/Right move, Up rotates, Down soft drops, OK or EXE hard drops.
+- **Snake** and **Breakout**: press 1 for Easy or 2 for Hard on the start screen.
 - **Breakout**: Left/Right move the paddle, OK, EXE or Up launches the ball.
 - **Minesweeper**: arrows move, OK opens a square, EXE places or removes a flag.
 - **Football**: arrows run (you're blue); touch the ball to dribble it, OK or EXE shoots the way you're facing, and run into the CPU to try to win the ball back. You kick off first.
@@ -64,7 +65,7 @@ The number keys are laid out like the board:
 1 2 3
 ```
 
-After a game ends, OK or EXE plays again and key 12 quits (Snake exits on any key). Tic-Tac-Toe and Connect Four keep a running score between rounds.
+After a game ends, OK or EXE plays again (Snake and Breakout go back to their start screen) and key 12 quits. Tic-Tac-Toe and Connect Four keep a running score between rounds.
  
 ## Design notes
  
