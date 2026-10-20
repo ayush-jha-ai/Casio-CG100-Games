@@ -29,11 +29,23 @@ def man(p,c):
     box(p[0]-3,p[1]+2,2,3,K)
     box(p[0]+2,p[1]+2,2,3,K)
 
+def menu():
+    box(0,0,384,192,(20,20,20))
+    draw_string(110,30,"FOOTBALL",WH,"large")
+    draw_string(120,80,"1  Easy",WH)
+    draw_string(120,105,"2  Hard",WH)
+    draw_string(40,145,"Arrows run, OK shoots the way you face",WH,"small")
+    show_screen()
+    while getkey():pass
+    k=0
+    while k not in (81,82,12):k=getkey()
+    return (-1,1,0)[(12,81,82).index(k)]
+
 def hud(a,b,m):
     box(0,0,384,14,(20,20,20))
     draw_string(110,1,"YOU "+str(a)+" - "+str(b)+" CPU   "+str(m)+"'",WH,"small")
 
-def kick(ball,gk):
+def kick(ball,gk,w):
     ball[0]+=ball[2]
     ball[1]+=ball[3]
     ball[2]-=ball[2]//24
@@ -43,7 +55,7 @@ def kick(ball,gk):
     if by<16 or by>188:ball[3]=-ball[3]
     if (bx<4 or bx>378) and not 76<by<116:ball[2]=-ball[2]
     for g in gk:
-        if abs(g[0]-bx)<6 and abs(g[1]-by)<8:
+        if abs(g[0]-bx)<6 and abs(g[1]-by)<w:
             ball[2]=-ball[2]
             ball[0]+=ball[2]
     if bx<1:return 2

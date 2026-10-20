@@ -3,6 +3,8 @@ from random import randint
 
 def main():
     while True:
+        e=menu()
+        if e<0:return
         a=b=f=0
         ko=1
         for i in range(12):box(i*32,14,32,178,((40,150,40),(60,170,60))[i%2])
@@ -29,12 +31,14 @@ def main():
                 tx=bx-v[0]
                 ty=by-v[1]
                 if hv==2:tx,ty=-v[0]+20,96-v[1]
-                v[0]+=(tx>2)*2-(tx<-2)*2
-                v[1]+=(ty>2)*2-(ty<-2)*2
-                for g in gk:g[1]+=(by>g[1]+1)-(by<g[1]-1)
+                if not e or f%3:
+                    v[0]+=(tx>2)*2-(tx<-2)*2
+                    v[1]+=(ty>2)*2-(ty<-2)*2
+                for g in gk:
+                    if not e or f%2:g[1]+=(by>g[1]+1)-(by<g[1]-1)
                 for g in gk:g[1]=max(76,min(116,g[1]))
                 for i,p in ((1,u),(2,v)):
-                    if abs(p[0]-bx)<7 and abs(p[1]-by)<7 and (hv!=i and randint(0,(3,12)[i-1])==0 or hv==0):hv=i
+                    if abs(p[0]-bx)<7 and abs(p[1]-by)<7 and (hv!=i and randint(0,(3,(12,30)[e])[i-1])==0 or hv==0):hv=i
                 if hv==1:
                     ball[0]=(u[0]+6*dr[0])*16
                     ball[1]=(u[1]+6*dr[1])*16
@@ -43,6 +47,9 @@ def main():
                         ball[1]=(u[1]+12*dr[1])*16
                         ball[2]=dr[0]*120
                         ball[3]=dr[1]*120+randint(-20,20)
+                        if dr==(1,0) and u[0]>192:
+                            ty=(112,80)[gk[1][1]>96]
+                            ball[3]=(ty-u[1])*120//max(30,381-u[0])
                         hv=0
                 elif hv==2:
                     ball[0]=(v[0]-6)*16
@@ -53,7 +60,7 @@ def main():
                         hv=0
                         v[0]+=10
                 else:
-                    go=kick(ball,gk)
+                    go=kick(ball,gk,(8,5)[e])
                     if go:ko=go%2+1
                     a+=go==1
                     b+=go==2
@@ -85,7 +92,7 @@ def main():
         box(100,62,184,96,(20,20,20))
         draw_string(120,70,"FULL TIME",WH,"large")
         draw_string(150,100,r,WH)
-        draw_string(140,130,"OK: again",WH)
+        draw_string(140,130,"OK: menu",WH)
         show_screen()
         while getkey():pass
         k=0

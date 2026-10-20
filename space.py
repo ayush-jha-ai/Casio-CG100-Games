@@ -10,15 +10,16 @@ def main():
         draw_string(60,95,"Shoot the aliens before they",WH,"small")
         draw_string(60,107,"cross the red line at the bottom",WH,"small")
         draw_string(60,127,"Best "+str(L.best),WH,"small")
-        draw_string(60,150,"OK: start",(255,255,0))
+        draw_string(60,150,"1  Easy    2  Hard",(255,255,0))
         show_screen()
-        if key()==12:return
+        md=pick()
+        if md<0:return
         box(0,0,384,192,K)
         for i in range(50):
             set_pixel(randint(0,383),randint(14,185),(randint(90,255),)*3)
         box(0,187,384,1,RD)
         s=0
-        l=3
+        l=(3,5)[md]
         w=1
         n=0
         x=180
@@ -64,16 +65,16 @@ def main():
                     ship(x,172,SC)
                     if l<1:break
                 else:box(b[0],b[1],2,4,RD)
-            if len(al)<2+w and randint(0,max(4,25-2*w))==0:
+            if len(al)<2+(w,w//2)[md] and randint(0,max(4,25-2*w))==0:
                 al.append([randint(0,26)*14,14,randint(-1,1),randint(0,2)])
             for e in al[:]:
-                if f%max(1,5-w) or l<1:continue
+                if f%max(1,5-w+2*md) or l<1:continue
                 alien(e,K)
                 e[1]+=2
                 e[0]+=e[2]*2
                 if e[0]<0 or e[0]>370:e[2]=-e[2]
                 e[0]=max(0,min(370,e[0]))
-                if w>2 and randint(0,60)==0 and len(bo)<3:bo.append([e[0]+6,e[1]+10])
+                if w>2+2*md and randint(0,60)==0 and len(bo)<3:bo.append([e[0]+6,e[1]+10])
                 hit=0
                 for b in bu[:]:
                     if e[0]-2<b[0]<e[0]+14 and e[1]<b[1]+5 and b[1]<e[1]+10:

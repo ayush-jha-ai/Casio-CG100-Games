@@ -10,8 +10,8 @@ Thirteen games written in MicroPython that run natively on a Casio CG100 graphin
 | File | Game | What's interesting |
 | --- | --- | --- |
 | `flap2048.py` | **2048 Flappy** | An original hybrid. Your bird carries a number, and each wall is a column of powers of two. Fly through the slot matching your number to double it. Reach 2048 to win. |
-| `football.py` + `footlib.py` | **Football** | FIFA-style 1-v-1 match on a striped pitch: dribble, shoot, and tackle a CPU striker, beat its goalkeeper, and win before the 90-minute clock runs out. |
-| `space.py` + `spacelib.py` | **Space Shooter** | Fly a ship along the bottom of a starfield and shoot down aliens before they cross the red line. Numbered waves get bigger and faster, aliens start dropping bombs from wave 3, and kills explode. Shows your ships, the wave and your best score. |
+| `football.py` + `footlib.py` | **Football** | FIFA-style 1-v-1 match on a striped pitch: dribble, shoot, and tackle a CPU striker, beat its goalkeeper, and win before the 90-minute clock runs out. Shots towards goal aim for the corner away from the keeper. Easy has a slower CPU striker and keeper; Hard is a real contest. |
+| `space.py` + `spacelib.py` | **Space Shooter** | Fly a ship along the bottom of a starfield and shoot down aliens before they cross the red line. Numbered waves get bigger and faster, aliens start dropping bombs from wave 3, and kills explode. Shows your ships, the wave and your best score. Easy gives five ships, slower and fewer aliens, and no bombs until wave 5. |
 | `halloween.py` + `hwlib.py` | **Trick or Treat** | Catch sweets in your pumpkin bucket under a full moon. Golden lollipops are worth 50 and hearts give an extra life; ghosts and zig-zagging bats cost one. Catching sweets in a row builds a combo multiplier up to x5, and the game levels up as your score grows. |
 | `pacman.py` + `paclib.py` | **Pac-Man** | A 27 x 22 maze with 250 dots, power pellets, a wrap-around tunnel, and four ghosts that each chase differently. Eat a power pellet to turn them blue and chase them back. |
 | `tetris.py` | **Tetris** | All seven pieces with rotation and wall kicks, soft and hard drop, line clears that speed the game up, and a next-piece preview. |
@@ -47,7 +47,7 @@ The games read raw key codes from `casioplot.getkey()`. Each code is the key's r
 Per game:
 
 - **Tetris**: Left/Right move, Up rotates, Down soft drops, OK or EXE hard drops.
-- **Snake** and **Breakout**: press 1 for Easy or 2 for Hard on the start screen.
+- **Snake**, **Breakout**, **Football** and **Space Shooter**: press 1 for Easy or 2 for Hard on the start screen.
 - **Breakout**: Left/Right move the paddle, OK, EXE or Up launches the ball.
 - **Minesweeper**: arrows move, OK opens a square, EXE places or removes a flag.
 - **Football**: arrows run (you're blue); touch the ball to dribble it, OK or EXE shoots the way you're facing, and run into the CPU to try to win the ball back. You kick off first.
