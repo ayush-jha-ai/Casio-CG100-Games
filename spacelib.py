@@ -35,11 +35,17 @@ def alien(e,c):
 def hud(s,l,w):
     box(0,0,384,12,K)
     draw_string(4,1,"Score "+str(s)+"  Best "+str(max(s,best))+"  Wave "+str(w),WH,"small")
-    for i in range(l):ship(324+i*18,0,SC)
+    for i in range(l):ship(296+i*17,0,SC)
 
 def say(t,c):
     box(20,80,344,24,K)
     if t:draw_string(192-6*len(t),84,t,c)
+
+def pick():
+    while getkey():pass
+    k=0
+    while k not in (81,82,12):k=getkey()
+    return (-1,1,0)[(12,81,82).index(k)]
 
 def key():
     while getkey():pass
